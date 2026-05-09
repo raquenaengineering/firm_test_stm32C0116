@@ -26,6 +26,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stm32c0xx_hal.h"
+#include "stm32c0xx_hal_i2c.h"
+#include "stm32c0xx_hal_i2c_ex.h"
+
+
 
 #include "stdio.h"
 
@@ -55,11 +60,18 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+void I2C_Scanner(void);
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+// Retarget printf to UART
+int _write(int file, char *ptr, int len) {
+    HAL_UART_Transmit(&huart1, (uint8_t*)ptr, len, HAL_MAX_DELAY);
+    return len;
+}
 
 /* USER CODE END 0 */
 
@@ -103,6 +115,8 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+
   while (1)
   {
     /* USER CODE END WHILE */
@@ -114,10 +128,18 @@ int main(void)
 	uint32_t adc_value = HAL_ADC_GetValue(&hadc1);      // Read value
 
 	char msg[] = "Hello UART\r\n";
-	printf("ADC: %lu\r\n", adc_value);
+//	printf("ADC: %lu\r\n", adc_value);
 	HAL_UART_Transmit(&huart1, (uint8_t*)msg, sizeof(msg)-1, HAL_MAX_DELAY);
-	HAL_Delay(10);
+	HAL_Delay(100);
+	char msg1[] = "Performing i2c scan:\r\n";
+	HAL_UART_Transmit(&huart1, (uint8_t*)msg1, sizeof(msg1)-1, HAL_MAX_DELAY);
 
+
+	I2C_Scanner();
+	char msg2[] = "Done\r\n";
+	HAL_UART_Transmit(&huart1, (uint8_t*)msg2, sizeof(msg2)-1, HAL_MAX_DELAY);
+
+	HAL_Delay(100);
 
 	if(adc_value < 1000)
 	{
@@ -170,6 +192,38 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+// Replace with your I2C handle (e.g., hi2c1)
+//extern I2C_HandleTypeDef hi2c1;
+
+#define I2C_TIMEOUT 100 // Timeout in ms
+
+void I2C_Scanner(void) {
+    HAL_StatusTypeDef status;
+    uint8_t address = 0;
+    uint8_t data = 0;
+
+
+    char msg[] = "Scanning I2C bus for devices...\r\n";
+	HAL_UART_Transmit(&huart1, (uint8_t*)msg, sizeof(msg)-1, HAL_MAX_DELAY);
+
+//    printf("Scanning I2C bus for devices...\r\n");
+
+    for (address = 1; address < 127; address++) {
+        status = HAL_I2C_Master_Transmit(&hi2c1, (address << 1), &data, 1, I2C_TIMEOUT);
+        if (status == HAL_OK) {
+//        	char msg1[] = "Found device at address: 0x%02X\r\n";
+//			HAL_UART_Transmit(&huart1, (uint8_t*)msg1, sizeof(msg1)-1, HAL_MAX_DELAY);
+
+			printf("Found device at address: 0x%02X\r\n", address);
+        }
+        HAL_Delay(10); // Small delay between scans
+    }
+    char msg2[] = "Scan complete.\r\n";
+	HAL_UART_Transmit(&huart1, (uint8_t*)msg2, sizeof(msg2)-1, HAL_MAX_DELAY);
+
+//    printf("Scan complete.\r\n");
+}
 
 /* USER CODE END 4 */
 
