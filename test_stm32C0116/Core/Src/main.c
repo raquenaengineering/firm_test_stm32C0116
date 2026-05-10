@@ -123,23 +123,22 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
+	// ADC RELATED //
 	HAL_ADC_Start(&hadc1);                     // Start conversion
 	HAL_ADC_PollForConversion(&hadc1, 10);     // Wait until done
 	uint32_t adc_value = HAL_ADC_GetValue(&hadc1);      // Read value
-
-	char msg[] = "Hello UART\r\n";
-//	printf("ADC: %lu\r\n", adc_value);
-	HAL_UART_Transmit(&huart1, (uint8_t*)msg, sizeof(msg)-1, HAL_MAX_DELAY);
+	printf("ADC: %lu\r\n", adc_value);
 	HAL_Delay(100);
-	char msg1[] = "Performing i2c scan:\r\n";
-	HAL_UART_Transmit(&huart1, (uint8_t*)msg1, sizeof(msg1)-1, HAL_MAX_DELAY);
 
 
+	// I2C RELATED //
+//	printf("Performing i2c scan:\r\n");
 	I2C_Scanner();
-	char msg2[] = "Done\r\n";
-	HAL_UART_Transmit(&huart1, (uint8_t*)msg2, sizeof(msg2)-1, HAL_MAX_DELAY);
-
+//	printf("Done\r\n");
 	HAL_Delay(100);
+
+
+	// GPIO RELATED //
 
 	if(adc_value < 1000)
 	{
