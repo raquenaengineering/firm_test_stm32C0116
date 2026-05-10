@@ -61,8 +61,6 @@ void Error_Handler(void);
 #define Button_GPIO_Port GPIOF
 #define Joystick_Pin GPIO_PIN_8
 #define Joystick_GPIO_Port GPIOA
-#define LED_Pin GPIO_PIN_6
-#define LED_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
