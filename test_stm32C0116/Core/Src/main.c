@@ -21,7 +21,6 @@
 #include "adc.h"
 #include "i2c.h"
 #include "spi.h"
-#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -110,7 +109,6 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
-  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -141,12 +139,13 @@ int main(void)
 
 
 	// GPIO RELATED //
-
 	if(adc_value < 1000)
 	{
-		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+//		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 		HAL_Delay(500);
-		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+//		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 		HAL_Delay(500);
 	}
 
