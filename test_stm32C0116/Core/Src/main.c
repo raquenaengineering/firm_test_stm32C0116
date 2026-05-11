@@ -34,6 +34,8 @@
 
 #include "stdio.h"
 
+#include "MLX90614.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -97,6 +99,10 @@ int main(void)
 
   /* USER CODE BEGIN Init */
 
+  float obj_temp, amb_temp;
+
+  MLX90614_Init(&hi2c1);  // Initialize sensor
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -145,6 +151,19 @@ int main(void)
 
 	// PWM RELATED //
 	Set_PWM_From_Analog(adc_value);
+
+
+
+	// MLX90614 RELATED //
+//    obj_temp = MLX90614_GetTemp(&hi2c1, 0);  // Read Object 1 temp (°C)
+//    amb_temp = MLX90614_GetTemp(&hi2c1, 1);  // Read Ambient temp (°C)
+
+    obj_temp = MLX90614_GetTemp(&hi2c1, 0);
+    int obj_temp_int = (int)(obj_temp * 100);  // e.g., 25.50°C → 2550
+    printf("Temperature: %d.%02d°C\r\n", obj_temp_int / 100, obj_temp_int % 100);
+
+//    printf("Object Temp: %.2f°C, Ambient Temp: %.2f°C\r\n", obj_temp, amb_temp);
+    HAL_Delay(1000);  // Read every 1 second
 
 
   }
